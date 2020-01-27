@@ -11,14 +11,23 @@ LABEL maintainer="woa7"
 ARG DEBIAN_FRONTEND="noninteractive"
 
 ENV DISTRO="bionic" \
-DOWNLOAD_URL="https://download.mailpiler.com" \
 PILER_USER="piler" \
 MYSQL_HOSTNAME="localhost" \
 MYSQL_DATABASE="piler" \
 MYSQL_PILER_PASSWORD="piler123" \
-MYSQL_ROOT_PASSWORD="abcde123" \
+MYSQL_ROOT_PASSWORD="abcde123"
+
+ENV DOWNLOAD_URL="https://download.mailpiler.com" \
 SPHINX_BIN_TARGZ="sphinx-3.1.1-bin.tar.gz" \
-PACKAGE="${PACKAGE:-piler_1.3.7-bionic-94c54a0_amd64.deb}"
+SPHINX_BIN_TARGZ_DOWNLOAD_SHA256="f543fae12d4a240b424a906519936c8ada6e338346e215edfe0b8ec75c930d56" \
+SPHINX_BIN_TARGZ_DOWNLOAD_URL="${DOWNLOAD_URL}/generic-local/${SPHINX_BIN_TARGZ}"
+
+ENV PACKAGE_DOWNLOAD_URL_BASE="https://bitbucket.org/jsuto/piler/downloads/"
+PACKAGE="${PACKAGE:-piler_1.3.6~bionic-78e5a44_amd64.deb}" \
+PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-0ae6d1cae62f90f47c167ef1c050ae37954cc5986be759512679b34044ea748c}"
+#PACKAGE="${PACKAGE:-piler_1.3.7-bionic-94c54a0_amd64.deb}"
+#PACKAGE_DOWNLOAD_SHA256="025bf31155d31c4764c037df29703f85e2e56d66455616a25411928380f49d7c"
+
 
 ENV HOME="/var/piler" \
 PUID=${PUID:-911} \
@@ -38,12 +47,24 @@ RUN \
  php7.2-gd php7.2-curl php7.2-xml catdoc unrtf poppler-utils nginx tnef sudo libodbc1 libpq5 libzip4 \
  libtre5 libwrap0 cron libmariadb3 libmysqlclient-dev python python-mysqldb mariadb-server
  
- RUN \
+RUN \
  service mysql start && mysqladmin -u root password ${MYSQL_ROOT_PASSWORD}
+
+#RUN curl -fSL -o ruby.tar.gz "http://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.gz" \
+    #&& echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.gz" | sha256sum -c -
+RUN curl -fSL -o ${SPHINX_BIN_TARGZ} "${SPHINX_BIN_TARGZ_DOWNLOAD_URL}" \
+    && echo "$SPHINX_BIN_TARGZ_DOWNLOAD_SHA256 *$SPHINX_BIN_TARGZ" | sha256sum -c - || echo "sha256sum FAILD: ${SPHINX_BIN_TARGZ_DOWNLOAD_URL}"
+    \ should $SPHINX_BIN_TARGZ_DOWNLOAD_SHA256 but is:" ; sha256sum $SPHINX_BIN_TARGZ
+
+RUN curl -fSL -o ${PACKAGE} "${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}" \
+    && echo "$PACKAGE_DOWNLOAD_SHA256 *$PACKAGE" | sha256sum -c - || echo "sha256sum FAILD: ${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}"
+    \ should $PACKAGE_DOWNLOAD_SHA256 but is:" ; sha256sum $PACKAGE
+### ADD "https://bitbucket.org/jsuto/piler/downloads/${PACKAGE}" "/${PACKAGE}"
+COPY start.sh /start.sh
  
- RUN \
- wget --no-check-certificate -q -O ${SPHINX_BIN_TARGZ} ${DOWNLOAD_URL}/generic-local/${SPHINX_BIN_TARGZ} && \
- tar zxvf ${SPHINX_BIN_TARGZ} && \
+ ##RUN \
+ ##wget --no-check-certificate -q -O ${SPHINX_BIN_TARGZ} ${DOWNLOAD_URL}/generic-local/${SPHINX_BIN_TARGZ} && \
+ RUN tar zxvf ${SPHINX_BIN_TARGZ} && \
  rm -f ${SPHINX_BIN_TARGZ} && \
     sed -i 's/mail.[iwe].*//' /etc/rsyslog.conf && \
     sed -i '/session    required     pam_loginuid.so/c\#session    required     pam_loginuid.so' /etc/pam.d/cron && \
