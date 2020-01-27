@@ -51,8 +51,7 @@ RUN \
     touch /var/log/mail.log && \
     rm -f $PACKAGE /etc/nginx/sites-enabled/default && \
     sed -i 's/#ngram/ngram/g' /etc/piler/sphinx.conf.dist && \
-    sed -i 's/220/311/g' /etc/piler/sphinx.conf.dist
-
+    sed -i 's/220/311/g' /etc/piler/sphinx.conf.dist && \
  echo "**** cleanup ****" && \
  apt-get purge --auto-remove -y && \
  apt-get clean && \
