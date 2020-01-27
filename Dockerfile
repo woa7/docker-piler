@@ -4,7 +4,8 @@ ARG PACKAGE
 
 LABEL description="piler container" \
       maintainer="Janos SUTO, sj@acts.hu"
-      package="${PACKAGE}"
+      package="${PACKAGE:-piler_1.3.7-bionic-94c54a0_amd64.deb}"
+
 
 ENV DEBIAN_FRONTEND="noninteractive" \
     DISTRO="bionic" \
