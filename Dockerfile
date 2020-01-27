@@ -9,6 +9,17 @@ LABEL maintainer="woa7"
 
 # environment settings
 ARG DEBIAN_FRONTEND="noninteractive"
+
+ENV DISTRO="bionic" \
+DOWNLOAD_URL="https://download.mailpiler.com" \
+PILER_USER="piler" \
+MYSQL_HOSTNAME="localhost" \
+MYSQL_DATABASE="piler" \
+MYSQL_PILER_PASSWORD="piler123" \
+MYSQL_ROOT_PASSWORD="abcde123" \
+SPHINX_BIN_TARGZ="sphinx-3.1.1-bin.tar.gz" \
+PACKAGE="${PACKAGE:-piler_1.3.7-bionic-94c54a0_amd64.deb}"
+
 ENV HOME="/var/piler" \
 PUID=${PUID:-911} \
 PGID=${PGID:-911}
@@ -23,19 +34,20 @@ RUN \
  ##echo "deb http://ppa.launchpad.net/jcfp/nobetas/ubuntu bionic main" >> /etc/apt/sources.list.d/sabnzbd.list && \
  ##echo "deb-src http://ppa.launchpad.net/jcfp/nobetas/ubuntu bionic main" >> /etc/apt/sources.list.d/sabnzbd.list && \
  ##echo "deb http://ppa.launchpad.net/jcfp/sab-addons/ubuntu bionic main" >> /etc/apt/sources.list.d/sabnzbd.list && \
- ##echo "deb-src http://ppa.launchpad.net/jcfp/sab-addons/ubuntu bionic main" >> /etc/apt/sources.list.d/sabnzbd.list && \
+ ##echo "deb-src http://ppa.launchpad.net/jcfp/sab-addons/ubuntu bionic main" >> /etc/apt/sources.list.d/sabnzbd.list
+ 
+ RUN \
  echo "**** install packages ****" && \
- if [ -z ${SABNZBD_VERSION+x} ]; then \
-	SABNZBD="sabnzbdplus"; \
- else \
-	SABNZBD="sabnzbdplus=${SABNZBD_VERSION}"; \
- fi && \
  apt-get update && \
  apt-get install -y \
-	wget rsyslog openssl sysstat php7.2-cli php7.2-cgi php7.2-mysql php7.2-fpm php7.2-zip php7.2-ldap \
-      php7.2-gd php7.2-curl php7.2-xml catdoc unrtf poppler-utils nginx tnef sudo libodbc1 libpq5 libzip4 \
-      libtre5 libwrap0 cron libmariadb3 libmysqlclient-dev python python-mysqldb mariadb-server && \
- service mysql start && mysqladmin -u root password ${MYSQL_ROOT_PASSWORD} && \
+ wget rsyslog openssl sysstat php7.2-cli php7.2-cgi php7.2-mysql php7.2-fpm php7.2-zip php7.2-ldap \
+ php7.2-gd php7.2-curl php7.2-xml catdoc unrtf poppler-utils nginx tnef sudo libodbc1 libpq5 libzip4 \
+ libtre5 libwrap0 cron libmariadb3 libmysqlclient-dev python python-mysqldb mariadb-server
+ 
+ RUN \
+ service mysql start && mysqladmin -u root password ${MYSQL_ROOT_PASSWORD}
+ 
+ RUN \
  wget --no-check-certificate -q -O ${SPHINX_BIN_TARGZ} ${DOWNLOAD_URL}/generic-local/${SPHINX_BIN_TARGZ} && \
  tar zxvf ${SPHINX_BIN_TARGZ} && \
  rm -f ${SPHINX_BIN_TARGZ} && \
