@@ -4,8 +4,6 @@ ARG PACKAGE
 
 LABEL description="piler container" \
       maintainer="Janos SUTO, sj@acts.hu"
-      package="${PACKAGE:-piler_1.3.7-bionic-94c54a0_amd64.deb}"
-
 
 ENV DEBIAN_FRONTEND="noninteractive" \
     DISTRO="bionic" \
@@ -15,7 +13,8 @@ ENV DEBIAN_FRONTEND="noninteractive" \
     MYSQL_DATABASE="piler" \
     MYSQL_PILER_PASSWORD="piler123" \
     MYSQL_ROOT_PASSWORD="abcde123" \
-    SPHINX_BIN_TARGZ="sphinx-3.1.1-bin.tar.gz"
+    SPHINX_BIN_TARGZ="sphinx-3.1.1-bin.tar.gz" \
+    PACKAGE="${PACKAGE:-piler_1.3.7-bionic-94c54a0_amd64.deb}"
 
 ADD "https://bitbucket.org/jsuto/piler/downloads/${PACKAGE}" "/${PACKAGE}"
 ADD start.sh /start.sh
