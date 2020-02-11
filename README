@@ -3,7 +3,7 @@ How to build
   Pick the latest deb package from Bitbucket download page (https://bitbucket.org/jsuto/piler/downloads/)
   and use it as the PACKAGE build argument, eg.
 
-  docker build --build-arg PACKAGE=piler_1.3.7-bionic-94c54a0_amd64.deb PACKAGE_DOWNLOAD_SHA256=025bf31155d31c4764c037df29703f85e2e56d66455616a25411928380f49d7c -t woa7/piler .
+  docker build --build-arg PACKAGE=piler_1.3.7-bionic-94c54a0_amd64.deb --build-arg PACKAGE_DOWNLOAD_SHA256=025bf31155d31c4764c037df29703f85e2e56d66455616a25411928380f49d7c -t woa7/piler .
 
 How to run the image
 
