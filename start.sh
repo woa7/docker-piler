@@ -77,7 +77,7 @@ fix_configs() {
 service rsyslog start
 service mysql start
 
-create_mysql_db
+mysqlshow -h "$MYSQL_HOSTNAME" -u "$PILER_USER" --password="$MYSQL_PILER_PASSWORD" "$MYSQL_DATABASE" > /dev/null 2>&1 || create_mysql_db
 pre_seed_sphinx
 fix_configs
 
