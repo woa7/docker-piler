@@ -1,4 +1,58 @@
+PUID and PGID is work in progress, buggy?
+
+## Usage
+
+Here are some example snippets to help you get started creating a container.
+
+### docker
+
+```
+docker create \
+  --name=piler1 \
+  -e PUID=1000 `#optional` \
+  -e PGID=1000 `#optional` \
+  -e TZ=Europe/London `#optional` \
+  -e PILER_HOST=archive.yourdomain.com \
+  -p 443:443 `#optional` \
+  -p 80:80 \
+  -v </path/to/appdata/config>:/var/piler \
+  --restart unless-stopped \
+  woa7/piler:1.3.7
+```
+docker create --name=piler -e PUID=1000 `#optional` -e PGID=1000 `#optional` -e TZ=Europe/London `#optional` -e PILER_HOST=archive.example.org -p 443:443 `#optional` -p 80:80 -v </path/to/appdata/config>:/var/piler --restart unless-stopped woa7/piler:1.3.7
+docker start piler
+
+or
+  docker run -d --name piler -p 25:25 -p 80:80 -p 443:443 -v /var/piler -e PILER_HOST=archive.example.org woa7/piler
+
+* Shell access whilst the container is running: `docker exec -it piler /bin/bash`
+
+
+## User / Group Identifiers
+
+When using volumes (`-v` flags) permissions issues can arise between the host OS and the container, we avoid this issue by allowing you to specify the user `PUID` and group `PGID`.
+
+Ensure any volume directories on the host are owned by the same user you specify and any permissions issues will vanish like magic.
+
+In this instance `PUID=1000` and `PGID=1000`, to find yours use `id user` as below:
+
+```
+  on the host OS:
+  $ id username
+    uid=1000(dockeruser) gid=1000(dockergroup) groups=1000(dockergroup)
+```
+
+default logins:
+admin account:	admin@local
+admin password: pilerrocks
+auditor account:	auditor@local
+auditor password: auditor
+
+
 How to build
+
+check out 
+  git clone git@github.com:woa7/docker-piler.git && cd docker-piler
 
   Pick the latest deb package from Bitbucket download page (https://bitbucket.org/jsuto/piler/downloads/)
   and use it as the PACKAGE build argument, eg.
@@ -9,10 +63,9 @@ How to run the image
 
   Set the PILER_HOST env variable to match your hostname, eg.
 
-  docker run -d --name piler1 -p 25:25 -p 80:80 -e PILER_HOST=archive.yourdomain.com woa7/piler
+  docker run -d --name piler1 -p 25:25 -p 80:80 -e PILER_HOST=archive.example.org woa7/piler
 
-default logins:
-admin account:	admin@local
-admin password: pilerrocks
-auditor account:	auditor@local
-auditor password: auditor
+
+## Supported Architectures
+
+Our image support only `x86-64` at the time, as architectures. as the sphinx is only `x86-64`.
