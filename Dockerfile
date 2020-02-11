@@ -17,16 +17,30 @@ MYSQL_DATABASE="piler" \
 MYSQL_PILER_PASSWORD="piler123" \
 MYSQL_ROOT_PASSWORD="abcde123"
 
-ENV DOWNLOAD_URL="https://download.mailpiler.com" \
+ENV SPHINX_DOWNLOAD_URL_BASE="https://download.mailpiler.com/generic-local" \
 SPHINX_BIN_TARGZ="sphinx-3.1.1-bin.tar.gz" \
-SPHINX_BIN_TARGZ_DOWNLOAD_SHA256="f543fae12d4a240b424a906519936c8ada6e338346e215edfe0b8ec75c930d56" \
-SPHINX_BIN_TARGZ_DOWNLOAD_URL="${DOWNLOAD_URL}/generic-local/${SPHINX_BIN_TARGZ}"
+SPHINX_BIN_TARGZ_SHA256="f543fae12d4a240b424a906519936c8ada6e338346e215edfe0b8ec75c930d56" 
 
-ENV PACKAGE_DOWNLOAD_URL_BASE="https://bitbucket.org/jsuto/piler/downloads/"
+RUN echo "${SPHINX_DOWNLOAD_URL_BASE}"
+RUN echo "${SPHINX_BIN_TARGZ}"
+RUN echo "${SPHINX_BIN_TARGZ_SHA256}"
+
+ENV PACKAGE_DOWNLOAD_URL_BASE="https://bitbucket.org/jsuto/piler/downloads" \
 PACKAGE="${PACKAGE:-piler_1.3.6~bionic-78e5a44_amd64.deb}" \
 PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-0ae6d1cae62f90f47c167ef1c050ae37954cc5986be759512679b34044ea748c}"
 #PACKAGE="${PACKAGE:-piler_1.3.7-bionic-94c54a0_amd64.deb}"
-#PACKAGE_DOWNLOAD_SHA256="025bf31155d31c4764c037df29703f85e2e56d66455616a25411928380f49d7c"
+#PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-025bf31155d31c4764c037df29703f85e2e56d66455616a25411928380f49d7c}"
+
+#https://bitbucket.org/jsuto/piler/downloads/piler_1.3.7-bionic-94c54a0_amd64.deb
+
+RUN curl -fSL -o ${SPHINX_BIN_TARGZ} "${SPHINX_DOWNLOAD_URL_BASE}/${SPHINX_BIN_TARGZ}" \
+    && echo "$SPHINX_BIN_TARGZ_SHA256 *$SPHINX_BIN_TARGZ" | sha256sum -c - || echo "sha256sum FAILD: ${SPHINX_DOWNLOAD_URL_BASE}/${SPHINX_BIN_TARGZ}" \
+    ; echo "should $SPHINX_BIN_TARGZ_SHA256 but is:" ; sha256sum $SPHINX_BIN_TARGZ
+
+RUN curl -fSL -o ${PACKAGE} "${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}" \
+    && echo "$PACKAGE_DOWNLOAD_SHA256 *$PACKAGE" | sha256sum -c - || echo "sha256sum FAILD: ${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}" \
+    ; echo "should $PACKAGE_DOWNLOAD_SHA256 but is:" ; sha256sum $PACKAGE
+
 
 
 ENV HOME="/var/piler" \
@@ -52,13 +66,15 @@ RUN \
 
 #RUN curl -fSL -o ruby.tar.gz "http://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.gz" \
     #&& echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.gz" | sha256sum -c -
-RUN curl -fSL -o ${SPHINX_BIN_TARGZ} "${SPHINX_BIN_TARGZ_DOWNLOAD_URL}" \
-    && echo "$SPHINX_BIN_TARGZ_DOWNLOAD_SHA256 *$SPHINX_BIN_TARGZ" | sha256sum -c - || echo "sha256sum FAILD: ${SPHINX_BIN_TARGZ_DOWNLOAD_URL}"
-    \ should $SPHINX_BIN_TARGZ_DOWNLOAD_SHA256 but is:" ; sha256sum $SPHINX_BIN_TARGZ
+##RUN curl -fSL -o ${SPHINX_BIN_TARGZ} "${SPHINX_BIN_TARGZ_DOWNLOAD_URL}" \
+#RUN curl -fSL -o ${SPHINX_BIN_TARGZ} "${SPHINX_DOWNLOAD_URL_BASE}/${SPHINX_BIN_TARGZ}" \
+#    && echo "$SPHINX_BIN_TARGZ_SHA256 *$SPHINX_BIN_TARGZ" | sha256sum -c - || echo "sha256sum FAILD: ${SPHINX_DOWNLOAD_URL_BASE}/${SPHINX_BIN_TARGZ}" \
+#    ; echo "should $SPHINX_BIN_TARGZ_SHA256 but is:" ; sha256sum $SPHINX_BIN_TARGZ
 
-RUN curl -fSL -o ${PACKAGE} "${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}" \
-    && echo "$PACKAGE_DOWNLOAD_SHA256 *$PACKAGE" | sha256sum -c - || echo "sha256sum FAILD: ${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}"
-    \ should $PACKAGE_DOWNLOAD_SHA256 but is:" ; sha256sum $PACKAGE
+#RUN curl -fSL -o ${PACKAGE} "${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}" \
+#    && echo "$PACKAGE_DOWNLOAD_SHA256 *$PACKAGE" | sha256sum -c - || echo "sha256sum FAILD: ${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}" \
+#    ; echo "should $PACKAGE_DOWNLOAD_SHA256 but is:" ; sha256sum $PACKAGE
+
 ### ADD "https://bitbucket.org/jsuto/piler/downloads/${PACKAGE}" "/${PACKAGE}"
 COPY start.sh /start.sh
  
