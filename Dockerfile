@@ -112,4 +112,4 @@ EXPOSE 25 80 443
 #VOLUME /config
 VOLUME /var/piler
 
-CMD ["/start.sh"]
+CMD ["/bin/bash", "/start.sh"]
