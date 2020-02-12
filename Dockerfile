@@ -52,7 +52,19 @@ RUN \
  wget rsyslog openssl sysstat php7.2-cli php7.2-cgi php7.2-mysql php7.2-fpm php7.2-zip php7.2-ldap \
  php7.2-gd php7.2-curl php7.2-xml catdoc unrtf poppler-utils nginx tnef sudo libodbc1 libpq5 libzip4 \
  libtre5 libwrap0 cron libmariadb3 libmysqlclient-dev python python-mysqldb mariadb-server
- 
+
+# need on ubuntu / debian etc
+RUN \
+ echo "www-data ALL=NOPASSWD: /etc/init.d/rc.piler reload" > /etc/sudoers.d/www-data-sudo-rc.piler-reload && \
+ echo "Defaults:%www-data !requiretty" >> /etc/sudoers.d/www-data-sudo-rc.piler-reload && \
+ chmod 0440 /etc/sudoers.d/www-data-sudo-rc.piler-reload
+
+# need on Centos / Redhat etc
+RUN \
+ echo "apache ALL=NOPASSWD: /etc/init.d/rc.piler reload" > /etc/sudoers.d/apache-sudo-rc.piler-reload && \
+ echo "Defaults:%apache !requiretty" >> /etc/sudoers.d/apache-sudo-rc.piler-reload && \
+ chmod 0440 /etc/sudoers.d/apache-sudo-rc.piler-reload
+
 RUN \
  service mysql start && mysqladmin -u root password ${MYSQL_ROOT_PASSWORD}
 
