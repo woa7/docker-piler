@@ -1,0 +1,15 @@
+name: Docker Image CI
+
+on: [push]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      # org run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: docker build --build-arg VCS_REF=`git rev-parse — short HEAD` --build-arg BUILD_DATE=`date -u +”%Y-%m-%dT%H:%M:%SZ”` --file Dockerfile --tag my-image-name:$(date +%s)
