@@ -7,6 +7,12 @@ ARG PILER_VERSION
 LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="woa7"
 
+# for microbadger
+ARG VCS_REF
+LABEL org.label-schema.vcs-ref=$VCS_REF \
+          org.label-schema.vcs-url="e.g. https://github.com/microscaling/microscaling"
+
+
 # environment settings
 ARG DEBIAN_FRONTEND="noninteractive"
 
