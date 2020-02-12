@@ -13,6 +13,7 @@ jobs:
     - name: Build the Docker image
       # org run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
       run: |
+        set -vx
         export git_branch=${GITHUB_REF##*/}
         export git_hash_short=$(git rev-parse --short "$GITHUB_SHA")
         export VCS_REF_VAR=$(git rev-parse --short "$GITHUB_SHA")
