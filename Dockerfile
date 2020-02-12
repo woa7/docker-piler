@@ -1,4 +1,5 @@
-FROM lsiobase/ubuntu:bionic
+FROM ubuntu:focal
+#FROM lsiobase/ubuntu:bionic
 
 # set version label
 ARG BUILD_DATE
