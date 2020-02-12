@@ -13,7 +13,9 @@ jobs:
     - name: Build the Docker image
       # org run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
       run: |
-        export VCS_REF_VAR=`git rev-parse — short HEAD`
-        export BUILD_DATE_VAR=`date -u +”%Y-%m-%dT%H:%M:%SZ”`
-        docker build --build-arg VCS_REF=$BUILD_DATE_VAR --build-arg BUILD_DATE=$BUILD_DATE_VAR --file Dockerfile --tag my-image-name:$(date +%s)
+        export git_branch=${GITHUB_REF##*/}
+        export git_hash_short=$(git rev-parse --short "$GITHUB_SHA")
+        export VCS_REF_VAR=$(git rev-parse --short "$GITHUB_SHA")
+        export BUILD_DATE_VAR=$(date -u +”%Y-%m-%dT%H:%M:%SZ”)
+        docker build --build-arg VCS_REF=$VCS_REF_VAR --build-arg BUILD_DATE=$BUILD_DATE_VAR --file Dockerfile --tag my-image-name:$(date +%s)
         printenv
