@@ -55,20 +55,20 @@ RUN \
 
 # need on ubuntu / debian etc
 RUN \
- echo "www-data ALL=(root:root) NOPASSWD: /etc/init.d/rc.piler reload" > /etc/sudoers.d/81-www-data-sudo-rc-piler-reload && \
+ printf "www-data ALL=(root:root) NOPASSWD: /etc/init.d/rc.piler reload\n" > /etc/sudoers.d/81-www-data-sudo-rc-piler-reload && \
  printf "Defaults\\072\\045www-data \\041requiretty\\n" >> /etc/sudoers.d/81-www-data-sudo-rc-piler-reload && \
  chmod 0440 /etc/sudoers.d/81-www-data-sudo-rc-piler-reload
 
-RUN \
- echo "www-data ALL=(root:root) NOPASSWD: /etc/init.d/rc.piler reload" > /etc/sudoers.d/80-www-data-sudo-rc-piler-reload && \
- printf "Defaults\072\045www-data \041requiretty\n" >> /etc/sudoers.d/80-www-data-sudo-rc-piler-reload && \
- chmod 0440 /etc/sudoers.d/80-www-data-sudo-rc-piler-reload
+#RUN \
+# echo "www-data ALL=(root:root) NOPASSWD: /etc/init.d/rc.piler reload" > /etc/sudoers.d/80-www-data-sudo-rc-piler-reload && \
+# printf "Defaults\072\045www-data \041requiretty\n" >> /etc/sudoers.d/80-www-data-sudo-rc-piler-reload && \
+# chmod 0440 /etc/sudoers.d/80-www-data-sudo-rc-piler-reload
 
 
 # need on Centos / Redhat etc
 RUN \
- echo "apache ALL=(root:root) NOPASSWD: /etc/init.d/rc.piler reload" > /etc/sudoers.d/82-apache-sudo-rc-piler-reload && \
- echo "Defaults\\072\\045apache \\041requiretty\\n" >> /etc/sudoers.d/82-apache-sudo-rc-piler-reload && \
+ printf "apache ALL=(root:root) NOPASSWD: /etc/init.d/rc.piler reload\n" > /etc/sudoers.d/82-apache-sudo-rc-piler-reload && \
+ printf "Defaults\\072\\045apache \\041requiretty\\n" >> /etc/sudoers.d/82-apache-sudo-rc-piler-reload && \
  chmod 0440 /etc/sudoers.d/82-apache-sudo-rc-piler-reload
 
 RUN \
