@@ -26,6 +26,10 @@ RUN echo "${SPHINX_BIN_TARGZ}"
 RUN echo "${SPHINX_BIN_TARGZ_SHA256}"
 
 #ENV PACKAGE_DOWNLOAD_URL_BASE="https://bitbucket.org/jsuto/piler/downloads" \
+#PACKAGE="${PACKAGE:-piler_1.3.5~bionic-f2e4cb1_amd64.deb}" \
+#PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-b74e5f259a4a19c3cb166ab37cf84ade629bf0f0da9ec2c4fcf5c8a26965280f}"
+
+#ENV PACKAGE_DOWNLOAD_URL_BASE="https://bitbucket.org/jsuto/piler/downloads" \
 #PACKAGE="${PACKAGE:-piler_1.3.6~bionic-78e5a44_amd64.deb}" \
 #PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-0ae6d1cae62f90f47c167ef1c050ae37954cc5986be759512679b34044ea748c}"
 
