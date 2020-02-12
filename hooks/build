@@ -1,0 +1,13 @@
+#!/bin/bash
+# $IMAGE_NAME var is injected into the build so the tag is correct. 
+# see https://medium.com/microscaling-systems/labelling-automated-builds-on-docker-hub-f3d073fb8e1#.yldbwesu7
+# and https://microbadger.com/labels
+
+# ORG command form https://docs.docker.com/docker-hub/builds/advanced/#build-hook-examples
+# docker build --build-arg CUSTOM=$VAR -f $DOCKERFILE_PATH -t $IMAGE_NAME .
+# infos also on https://docs.docker.com/engine/reference/commandline/build/
+
+docker build --build-arg VCS_REF=`git rev-parse — short HEAD` \
+  --build-arg BUILD_DATE=`date -u +”%Y-%m-%dT%H:%M:%SZ”` \
+  -f $DOCKERFILE_PATH -t $IMAGE_NAME .
+  
