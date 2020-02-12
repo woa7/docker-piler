@@ -55,14 +55,14 @@ RUN \
 
 # need on ubuntu / debian etc
 RUN \
- echo "www-data ALL=NOPASSWD: /etc/init.d/rc.piler reload" > /etc/sudoers.d/www-data-sudo-rc.piler-reload && \
- echo "Defaults:%www-data !requiretty" >> /etc/sudoers.d/www-data-sudo-rc.piler-reload && \
+ echo "www-data ALL(ALL:ALL) NOPASSWD:/etc/init.d/rc.piler reload " > /etc/sudoers.d/www-data-sudo-rc.piler-reload && \
+ echo "Defaults:%www-data !requiretty " >> /etc/sudoers.d/www-data-sudo-rc.piler-reload && \
  chmod 0440 /etc/sudoers.d/www-data-sudo-rc.piler-reload
 
 # need on Centos / Redhat etc
 RUN \
- echo "apache ALL=NOPASSWD: /etc/init.d/rc.piler reload" > /etc/sudoers.d/apache-sudo-rc.piler-reload && \
- echo "Defaults:%apache !requiretty" >> /etc/sudoers.d/apache-sudo-rc.piler-reload && \
+ echo "apache ALL(ALL:ALL) NOPASSWD:/etc/init.d/rc.piler reload" > /etc/sudoers.d/apache-sudo-rc.piler-reload && \
+ echo "Defaults:%apache !requiretty " >> /etc/sudoers.d/apache-sudo-rc.piler-reload && \
  chmod 0440 /etc/sudoers.d/apache-sudo-rc.piler-reload
 
 RUN \
