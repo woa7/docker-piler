@@ -100,7 +100,7 @@ RUN \
 #    && echo "$PACKAGE_DOWNLOAD_SHA256 *$PACKAGE" | sha256sum -c - || echo "sha256sum FAILD: ${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}" \
 #    ; echo "should $PACKAGE_DOWNLOAD_SHA256 but is:" ; sha256sum $PACKAGE
 
-RUN sha256check () { printf %s\\n "$2 *$1" ; printf %s\\n "$2 *$1" | sha256sum -c - || printf %s\\n "sha256sum FAILD: $1 should $2 but is:" ; sha256sum $1 ; exit 1 ; } && \
+RUN sha256check () { printf %s\\n "$2 *$1" ; printf %s\\n "$2 *$1" | sha256sum -c - || $(printf %s\\n "sha256sum FAILD: $1 should $2 but is:" ; sha256sum $1 ; exit 1) ; } && \
 	curl -fSL -o ${PACKAGE} "${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}" && \
 	sha256check ${PACKAGE} ${PACKAGE_DOWNLOAD_SHA256}
 
