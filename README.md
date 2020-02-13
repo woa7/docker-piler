@@ -3,7 +3,8 @@
 - use the tar not the precompiled DEB, as the DEB is amd64 only.
 - hope i can add amd64, arm, arm64, ppc64le, s390x, as Supported Architectures
 - use ubuntu focal as docker base
-
+- docker ENV for password setting
+- generate random MYSQL passwords
 
 ## IMPORTANT!
 Note that piler stores all emails and attachments as separate files. You may tweak inode ratio, if necessary.
@@ -31,12 +32,14 @@ docker create \
   woa7/piler:1.3.7
 ```
 e.g.
+```
 docker create --name=piler -e PUID=1000 `#optional` -e PGID=1000 `#optional` -e PILER_HOST=archive.example.org -p 443:443 -p 25:25 -v </path/to/appdata/config>:/var/piler --restart unless-stopped woa7/piler:1.3.7
 docker start piler
-
+```
 or
+```
   docker run -d --name piler -p 25:25 -p 80:80 -p 443:443 -v /var/piler -e PILER_HOST=archive.example.org woa7/piler
-
+```
 * Shell access whilst the container is running: `docker exec -it piler /bin/bash`
 
 
@@ -53,13 +56,13 @@ In this instance `PUID=1000` and `PGID=1000`, to find yours use `id user` as bel
   $ id username
     uid=1000(dockeruser) gid=1000(dockergroup) groups=1000(dockergroup)
 ```
-
+```
 default logins:
 admin account:	admin@local
 admin password: pilerrocks
 auditor account:	auditor@local
 auditor password: auditor
-
+```
 
 How to build
 
@@ -85,8 +88,7 @@ Our image support only `amd64` at the time, as architectures. as the sphinx is o
 ## Documentation of piler it self:
 http://www.mailpiler.org/wiki/current:index
 
-
-from: http://www.mailpiler.org/
+# piler features from: http://www.mailpiler.org/
 Email archiving provides lots of benefits to your company. Piler is a feature rich open source email archiving solution, and a viable alternative to commercial email archiving products; check out the comparison with Mailarchiva.
 
 Piler has a nice GUI written in PHP supporting several authentication methods (AD/LDAP, SSO, Google OAuth, 2 FA, IMAP, POP3). Be sure to try the online demo!
@@ -106,8 +108,7 @@ Google Apps
 Office 365
 and many more
 
-from: http://www.mailpiler.org/wiki/current:piler-basics
-Piler basics in a nutshell
+# Piler basics in a nutshell from: http://www.mailpiler.org/wiki/current:piler-basics
 The piler email archiver uses the following components:
 
 mysql: piler stores crucial metadata of the messages
