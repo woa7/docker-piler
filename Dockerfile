@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:focal-20200115
 #FROM lsiobase/ubuntu:bionic
 
 # set version label
