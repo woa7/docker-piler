@@ -4,7 +4,7 @@
 - hope i can add amd64, arm, arm64, ppc64le, s390x, as Supported Architectures
 - use ubuntu focal as docker base
 - docker ENV for password setting
-- generate random MYSQL passwords
+- generate secure random MYSQL passwords
 
 ## IMPORTANT!
 Note that piler stores all emails and attachments as separate files. You may tweak inode ratio, if necessary.
@@ -19,7 +19,7 @@ Here are some example snippets to help you get started creating a container.
 
 ```
 docker create \
-  --name=piler1 \
+  --name=piler \
   -e PUID=1000 `#optional` \
   -e PGID=1000 `#optional` \
   -e TZ=Europe/London `#optional` \
@@ -38,7 +38,8 @@ docker start piler
 ```
 or
 ```
-  docker run -d --name piler -p 25:25 -p 80:80 -p 443:443 -v /var/piler -e PILER_HOST=archive.example.org woa7/piler
+  PILER_VAR_DATA=/srv/piler_var_data
+  docker run -d --name piler -p 25:25 -p 80:80 -p 443:443 -v ${PILER_VAR_DATA:-/foo/path/to/appdata/config}:/var/piler -e PILER_HOST=archive.example.org woa7/piler
 ```
 * Shell access whilst the container is running: `docker exec -it piler /bin/bash`
 
