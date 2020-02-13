@@ -11,20 +11,20 @@ LABEL maintainer="woa7"
 # environment settings
 ARG DEBIAN_FRONTEND="noninteractive"
 
-ENV DISTRO="bionic" \
+ENV DISTRO="focal" \
 PILER_USER="piler" \
 MYSQL_HOSTNAME="localhost" \
 MYSQL_DATABASE="piler" \
 MYSQL_PILER_PASSWORD="piler123" \
 MYSQL_ROOT_PASSWORD="abcde123"
 
-ENV SPHINX_DOWNLOAD_URL_BASE="https://download.mailpiler.com/generic-local" \
-SPHINX_BIN_TARGZ="sphinx-3.1.1-bin.tar.gz" \
-SPHINX_BIN_TARGZ_SHA256="f543fae12d4a240b424a906519936c8ada6e338346e215edfe0b8ec75c930d56" 
+###ENV SPHINX_DOWNLOAD_URL_BASE="https://download.mailpiler.com/generic-local" \
+###SPHINX_BIN_TARGZ="sphinx-3.1.1-bin.tar.gz" \
+###SPHINX_BIN_TARGZ_SHA256="f543fae12d4a240b424a906519936c8ada6e338346e215edfe0b8ec75c930d56" 
 
-RUN echo "${SPHINX_DOWNLOAD_URL_BASE}"
-RUN echo "${SPHINX_BIN_TARGZ}"
-RUN echo "${SPHINX_BIN_TARGZ_SHA256}"
+###RUN echo "${SPHINX_DOWNLOAD_URL_BASE}"
+###RUN echo "${SPHINX_BIN_TARGZ}"
+###RUN echo "${SPHINX_BIN_TARGZ_SHA256}"
 
 #ENV PACKAGE_DOWNLOAD_URL_BASE="https://bitbucket.org/jsuto/piler/downloads" \
 #PACKAGE="${PACKAGE:-piler_1.3.5~bionic-f2e4cb1_amd64.deb}" \
@@ -54,9 +54,11 @@ RUN \
  echo "**** install packages ****" && \
  apt-get update && \
  apt-get install -y \
- wget rsyslog openssl sysstat php7.2-cli php7.2-cgi php7.2-mysql php7.2-fpm php7.2-zip php7.2-ldap \
- php7.2-gd php7.2-curl php7.2-xml catdoc unrtf poppler-utils nginx tnef sudo libodbc1 libpq5 libzip4 \
- libtre5 libwrap0 cron libmariadb3 libmysqlclient-dev python python-mysqldb mariadb-server
+ wget rsyslog openssl sysstat php7.3-cli php7.3-cgi php7.3-mysql php7.3-fpm php7.3-zip php7.3-ldap \
+ php7.3-gd php7.3-curl php7.3-xml catdoc unrtf poppler-utils nginx tnef sudo libodbc1 libpq5 libzip5 \
+ libtre5 libwrap0 cron libmariadb3 libmysqlclient-dev python3 python3-mysqldb mariadb-server php-memcached memcached
+
+# versions bump libzip4 -> libzip5
 
 # need on ubuntu / debian etc
 RUN \
@@ -90,22 +92,27 @@ RUN \
 #    && echo "$PACKAGE_DOWNLOAD_SHA256 *$PACKAGE" | sha256sum -c - || echo "sha256sum FAILD: ${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}" \
 #    ; echo "should $PACKAGE_DOWNLOAD_SHA256 but is:" ; sha256sum $PACKAGE
 
-RUN curl -fSL -o ${SPHINX_BIN_TARGZ} "${SPHINX_DOWNLOAD_URL_BASE}/${SPHINX_BIN_TARGZ}" \
-    && echo "$SPHINX_BIN_TARGZ_SHA256 *$SPHINX_BIN_TARGZ" | sha256sum -c - || echo "sha256sum FAILD: ${SPHINX_DOWNLOAD_URL_BASE}/${SPHINX_BIN_TARGZ}" \
-    ; echo "should $SPHINX_BIN_TARGZ_SHA256 but is:" ; sha256sum $SPHINX_BIN_TARGZ
+####RUN curl -fSL -o ${SPHINX_BIN_TARGZ} "${SPHINX_DOWNLOAD_URL_BASE}/${SPHINX_BIN_TARGZ}" \
+####    && echo "$SPHINX_BIN_TARGZ_SHA256 *$SPHINX_BIN_TARGZ" | sha256sum -c - || echo "sha256sum FAILD: ${SPHINX_DOWNLOAD_URL_BASE}/${SPHINX_BIN_TARGZ}" \
+####    ; echo "should $SPHINX_BIN_TARGZ_SHA256 but is:" ; sha256sum $SPHINX_BIN_TARGZ
 
-RUN curl -fSL -o ${PACKAGE} "${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}" \
-    && echo "$PACKAGE_DOWNLOAD_SHA256 *$PACKAGE" | sha256sum -c - || echo "sha256sum FAILD: ${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}" \
-    ; echo "should $PACKAGE_DOWNLOAD_SHA256 but is:" ; sha256sum $PACKAGE
+#RUN curl -fSL -o ${PACKAGE} "${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}" \
+#    && echo "$PACKAGE_DOWNLOAD_SHA256 *$PACKAGE" | sha256sum -c - || echo "sha256sum FAILD: ${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}" \
+#    ; echo "should $PACKAGE_DOWNLOAD_SHA256 but is:" ; sha256sum $PACKAGE
 
+RUN sha256check () { printf %s\\n "$2 *$1" ; printf %s\\n "$2 *$1" | sha256sum -c - || printf %s\\n "sha256sum FAILD: $1 should $2 but is:" ; sha256sum $1 ; exit 1 ; } && \
+	curl -fSL -o ${PACKAGE} "${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}" && \
+	sha256check ${PACKAGE} ${PACKAGE_DOWNLOAD_SHA256}
 
 ### ADD "https://bitbucket.org/jsuto/piler/downloads/${PACKAGE}" "/${PACKAGE}"
 COPY start.sh /start.sh
  
  ##RUN \
  ##wget --no-check-certificate -q -O ${SPHINX_BIN_TARGZ} ${DOWNLOAD_URL}/generic-local/${SPHINX_BIN_TARGZ} && \
- RUN tar zxvf ${SPHINX_BIN_TARGZ} && \
- rm -f ${SPHINX_BIN_TARGZ} && \
+ 
+ ####RUN tar zxvf ${SPHINX_BIN_TARGZ} && \
+ ####rm -f ${SPHINX_BIN_TARGZ} && \
+   RUN \
     sed -i 's/mail.[iwe].*//' /etc/rsyslog.conf && \
     sed -i '/session    required     pam_loginuid.so/c\#session    required     pam_loginuid.so' /etc/pam.d/cron && \
     mkdir /etc/piler && \
