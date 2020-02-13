@@ -48,7 +48,7 @@ RUN \
  echo "***** install gnupg ****" && \
  apt-get update && \
  apt-get install -y \
-        gnupg
+        gpgv1 gpgv2
  
  RUN \
  echo "**** install packages ****" && \
