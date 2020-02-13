@@ -53,7 +53,7 @@ RUN \
  echo "**** install packages ****" && \
  apt-get update && \
  apt-get install -y \
- wget rsyslog openssl sysstat php7.2-cli php7.2-cgi php7.2-mysql php7.2-fpm php7.2-zip php7.2-ldap \
+ wget curl rsyslog openssl sysstat php7.2-cli php7.2-cgi php7.2-mysql php7.2-fpm php7.2-zip php7.2-ldap \
  php7.2-gd php7.2-curl php7.2-xml catdoc unrtf poppler-utils nginx tnef sudo libodbc1 libpq5 libzip4 \
  libtre5 libwrap0 cron libmariadb3 libmysqlclient-dev python python-mysqldb mariadb-server
 
