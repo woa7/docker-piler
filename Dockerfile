@@ -18,6 +18,9 @@ MYSQL_DATABASE="piler" \
 MYSQL_PILER_PASSWORD="piler123" \
 MYSQL_ROOT_PASSWORD="abcde123"
 
+ENV BUILD_DIR="${BUILD_DIR:-/tmp/build}"
+RUN mkdir -p ${BUILD_DIR}
+
 ###ENV SPHINX_DOWNLOAD_URL_BASE="https://download.mailpiler.com/generic-local" \
 ###SPHINX_BIN_TARGZ="sphinx-3.1.1-bin.tar.gz" \
 ###SPHINX_BIN_TARGZ_SHA256="f543fae12d4a240b424a906519936c8ada6e338346e215edfe0b8ec75c930d56" 
@@ -34,10 +37,16 @@ MYSQL_ROOT_PASSWORD="abcde123"
 #PACKAGE="${PACKAGE:-piler_1.3.6~bionic-78e5a44_amd64.deb}" \
 #PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-0ae6d1cae62f90f47c167ef1c050ae37954cc5986be759512679b34044ea748c}"
 
-ENV PACKAGE_DOWNLOAD_URL_BASE="https://bitbucket.org/jsuto/piler/downloads" \
-PACKAGE="${PACKAGE:-piler_1.3.7-bionic-94c54a0_amd64.deb}" \
-PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-025bf31155d31c4764c037df29703f85e2e56d66455616a25411928380f49d7c}"
+###ENV PACKAGE_DOWNLOAD_URL_BASE="https://bitbucket.org/jsuto/piler/downloads" \
+###PACKAGE="${PACKAGE:-piler_1.3.7-bionic-94c54a0_amd64.deb}" \
+###PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-025bf31155d31c4764c037df29703f85e2e56d66455616a25411928380f49d7c}"
 
+ENV PACKAGE_DOWNLOAD_URL_BASE="https://bitbucket.org/jsuto/piler/downloads" \
+PACKAGE="${PACKAGE:-piler-1.3.7.tar.gz}" \
+PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-21c0db70827b2bf6b6c9c5b467f748ea90adf7b4c2c38408edeee331e101925e}"
+
+
+# https://bitbucket.org/jsuto/piler/downloads/piler-1.3.7.tar.gz
 #https://bitbucket.org/jsuto/piler/downloads/piler_1.3.7-bionic-94c54a0_amd64.deb
 
 ENV HOME="/var/piler" \
@@ -122,8 +131,43 @@ COPY start.sh /start.sh
     printf "[mysql]\nuser = piler\npassword = ${MYSQL_PILER_PASSWORD}\n" > /etc/piler/.my.cnf && \
     printf "[mysql]\nuser = root\npassword = ${MYSQL_ROOT_PASSWORD}\n" > /root/.my.cnf && \
     echo "alias mysql='mysql --defaults-file=/etc/piler/.my.cnf'" > /root/.bashrc && \
-    echo "alias t='tail -f /var/log/syslog'" >> /root/.bashrc && \
-    dpkg -i $PACKAGE && \
+    echo "alias t='tail -f /var/log/syslog'" >> /root/.bashrc
+
+##### RUN echo "**** install piler package via dpkg ****"  && \
+#####    dpkg -i $PACKAGE
+
+ RUN echo "**** install piler package via source tgz ****"  && \
+    tar --directory=${BUILD_DIR} --restrict --strip-components=1 -zxvf ${PACKAGE} && \
+    rm -f ${PACKAGE}
+#RUN $([[ $(id -g piler 2>/dev/null) ]] || groupadd --gid $PGID piler)
+#RUN $([[ $(id -u piler 2>/dev/null) ]] || useradd --uid $PUID -g piler -d /var/piler -s /bin/bash piler)
+
+RUN groupadd --gid $PGID piler
+RUN useradd --uid $PUID -g piler -d /var/piler -s /bin/bash piler
+RUN usermod -L piler
+RUN mkdir -p /var/piler
+RUN chmod 755 /var/piler
+
+RUN \
+ echo "**** install build-essential ****" && \
+ apt-get update && \
+ apt-get install -y \
+ build-essential \
+ libcurl4-openssl-dev php7.3-dev libwrap0-dev libtre-dev libzip-dev libmysqlclient-dev 
+
+
+RUN echo "**** build piler package from source ****"  && \
+    cd ${BUILD_DIR} && \
+    ./configure \
+        --localstatedir=/var \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+        --with-database=mysql  && \
+    make && \
+    su -c 'make install' && \
+    ldconfig
+
+RUN echo "**** continue with the setup ****"  && \
     crontab -u $PILER_USER /usr/share/piler/piler.cron && \
     touch /var/log/mail.log && \
     rm -f $PACKAGE /etc/nginx/sites-enabled/default && \
