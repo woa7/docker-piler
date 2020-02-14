@@ -56,7 +56,7 @@ RUN \
  apt-get install -y \
  wget curl rsyslog openssl sysstat php7.3-cli php7.3-cgi php7.3-mysql php7.3-fpm php7.3-zip php7.3-ldap \
  php7.3-gd php7.3-curl php7.3-xml catdoc unrtf poppler-utils nginx tnef sudo libodbc1 libpq5 libzip5 \
- libtre5 libwrap0 cron libmariadb3 libmysqlclient-dev python3 python3-mysqldb mariadb-server php-memcached memcached
+ libtre5 libwrap0 cron libmariadb3 libmysqlclient-dev python3 python3-mysqldb mariadb-server php-memcached memcached 
 
 # versions bump libzip4 -> libzip5
 
@@ -110,8 +110,11 @@ COPY start.sh /start.sh
  ##RUN \
  ##wget --no-check-certificate -q -O ${SPHINX_BIN_TARGZ} ${DOWNLOAD_URL}/generic-local/${SPHINX_BIN_TARGZ} && \
  
- ####RUN tar zxvf ${SPHINX_BIN_TARGZ} && \
+ ####RUN echo "**** install sphinxsearch package via bin.tgz ****" && tar zxvf ${SPHINX_BIN_TARGZ} && \
  ####rm -f ${SPHINX_BIN_TARGZ} && \
+ # OR  +++++++++++++ #
+ RUN echo "**** install sphinxsearch package via apt-get ****" && apt-get update && apt-get install -y sphinxsearch
+ 
    RUN \
     sed -i 's/mail.[iwe].*//' /etc/rsyslog.conf && \
     sed -i '/session    required     pam_loginuid.so/c\#session    required     pam_loginuid.so' /etc/pam.d/cron && \
@@ -125,7 +128,7 @@ COPY start.sh /start.sh
     touch /var/log/mail.log && \
     rm -f $PACKAGE /etc/nginx/sites-enabled/default && \
     sed -i 's/#ngram/ngram/g' /etc/piler/sphinx.conf.dist && \
-    sed -i 's/220/311/g' /etc/piler/sphinx.conf.dist && \
+    echo "FIX me ---sed -i 's/220/311/g' /etc/piler/sphinx.conf.dist---" && \
  echo "**** cleanup ****" && \
  apt-get purge --auto-remove -y && \
  apt-get clean && \
