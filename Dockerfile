@@ -81,7 +81,7 @@ RUN \
  apt-get install -y \
  nvi wget curl rsyslog openssl sysstat php7.3-cli php7.3-cgi php7.3-mysql php7.3-fpm php7.3-zip php7.3-ldap \
  php7.3-gd php7.3-curl php7.3-xml catdoc unrtf poppler-utils nginx tnef sudo libodbc1 libpq5 libzip5 \
- libtre5 libwrap0 cron libmariadb3 libmysqlclient-dev python3 python3-mysqldb mariadb-server php-memcached memcached 
+ libtre5 libwrap0 cron libmariadb3 libmysqlclient-dev python3 python3-mysqldb mariadb-server php-memcached memcached mariadb-client
 
 # versions bump libzip4 -> libzip5
 
@@ -169,7 +169,9 @@ RUN \
  apt-get update && \
  apt-get install -y \
  build-essential \
- libcurl4-openssl-dev php7.3-dev libwrap0-dev libtre-dev libzip-dev libmysqlclient-dev 
+ libcurl4-openssl-dev php7.3-dev libwrap0-dev libtre-dev libzip-dev libmariadb-dev libc6 libc6-dev \
+ libc6-x32 libc6-dev-x32 libc6-i386 libc6-dev-i386 libc6-amd64-cross libc6-amd64-i386-cross libc6-amd64-x32-cross libc6-arm64-cross libc6-armhf-cross libc6-dev-arm64-cross libc6-dev-armhf-cross
+ ###libcurl4-openssl-dev php7.3-dev libwrap0-dev libtre-dev libzip-dev libmysqlclient-dev
 
  RUN echo "**** patch piler source ****"
  COPY 101-piler-1-3-7-sphinxsearch-310-220-compatily-php-if-fix.patch ${BUILD_DIR}
@@ -178,21 +180,28 @@ RUN \
 RUN echo "**** build piler package from source ****"  && \
     cd ${BUILD_DIR} && \
     ./configure \
-        --localstatedir=/var \
         --prefix=/usr \
         --sysconfdir=/etc \
-        --with-database=mysql  \
-        --enable-tcpwrappers && \
-    make && \
+        --localstatedir=/var \
+        --with-database=mariadb  && \
+    make clean all && \
     su -c 'make install' && \
     ldconfig
+
+RUN echo "**** piler unit_tests ****"  && \
+cd ${BUILD_DIR}/unit_tests && ./run.sh
+
+RUN echo "**** piler phpunit ****"  && \
+apt-get update && apt-get install -y phpunit && \
+cd ${BUILD_DIR} && phpunit
+###mysql -u piler -ppiler123 piler1 < /usr/share/piler/db-mysql.sql
 
 RUN echo "**** continue with the setup ****"  && \
     crontab -u $PILER_USER /usr/share/piler/piler.cron && \
     touch /var/log/mail.log && \
     rm -f $PACKAGE /etc/nginx/sites-enabled/default && \
     sed -i 's/#ngram/ngram/g' /etc/piler/sphinx.conf.dist && \
-    echo "FIX me ---sed -i 's/220/311/g' /etc/piler/sphinx.conf.dist---" && \
+    echo "FIX me ---sed -i 's/220/311/g' /etc/piler/sphinx.conf.dist---" && grep -i SPHINX_VERSION /etc/piler/sphinx.conf.dist && \
  echo "**** cleanup ****" && \
  apt-get purge --auto-remove -y && \
  apt-get clean && \
