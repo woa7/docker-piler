@@ -45,7 +45,7 @@ or
 * Shell access whilst the container is running: `docker exec -it piler /bin/bash`
 
 ## testing the beta based on Ubuntu 20.04 LTS Focal Fossa
-  PILER_VAR_DATA=/var/piler-data
+  PILER_VAR_DATA=/var/piler-data ; 
   docker run -d --name piler -p 25:25 -p 80:80 -p 443:443 -v ${PILER_VAR_DATA:-/foo/path/to/appdata/config}:/var/piler -e PILER_HOST=archive.example.org woa7/piler:focal
 
 ## User / Group Identifiers
