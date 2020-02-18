@@ -104,7 +104,11 @@ fix_configs
 
 service cron start
 ####service php7.2-fpm start
-service php7.2-fpm start || service php7.3-fpm start
+echo "starting php7.3-fpm"
+service php7.3-fpm start
+service php7.3-fpm start || service php7.2-fpm start
+service php7.2-fpm status || true
+service php7.3-fpm status || true
 ###service php7.3-fpm status
 service nginx start
 /etc/init.d/rc.searchd start
