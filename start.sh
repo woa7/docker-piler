@@ -4,6 +4,7 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+
 DATAROOTDIR="/usr/share"
 SYSCONFDIR="/etc"
 SPHINXCFG="/etc/piler/sphinx.conf"
@@ -11,6 +12,10 @@ PILER_HOST=${PILER_HOST:-archive.yourdomain.com}
 PILER_CONF="/etc/piler/piler.conf"
 CONFIG_SITE_PHP="/etc/piler/config-site.php"
 CONFIG_PHP="/var/piler/www/config.php"
+
+create_dir_if_not_exist() {
+   [[ -d $1 ]] || mkdir $1
+}
 
 create_mysql_db() {
    echo "Creating mysql database"
@@ -74,6 +79,22 @@ fix_configs() {
 }
 
 
+
+create_dir_if_not_exist /var/piler
+create_dir_if_not_exist /var/piler/error
+create_dir_if_not_exist /var/piler/imap
+create_dir_if_not_exist /var/piler/sphinx
+create_dir_if_not_exist /var/piler/stat
+create_dir_if_not_exist /var/piler/store
+create_dir_if_not_exist /var/piler/tmp
+create_dir_if_not_exist /var/run/piler
+###
+create_dir_if_not_exist /var/piler/www
+create_dir_if_not_exist /var/piler/www/tmp 
+create_dir_if_not_exist /var/piler/www/images
+/bin/bash /piler-postinst || true
+
+
 service rsyslog start
 service mysql start
 
@@ -82,7 +103,9 @@ pre_seed_sphinx
 fix_configs
 
 service cron start
-service php7.2-fpm start
+####service php7.2-fpm start
+service php7.2-fpm start || service php7.3-fpm start
+###service php7.3-fpm status
 service nginx start
 /etc/init.d/rc.searchd start
 

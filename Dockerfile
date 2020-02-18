@@ -10,15 +10,21 @@ LABEL maintainer="woa7"
 
 # environment settings
 ARG DEBIAN_FRONTEND="noninteractive"
-
 ENV DISTRO="focal" \
-PILER_USER="piler" \
 MYSQL_HOSTNAME="localhost" \
 MYSQL_DATABASE="piler" \
 MYSQL_PILER_PASSWORD="piler123" \
 MYSQL_ROOT_PASSWORD="abcde123"
 
-ENV BUILD_DIR="${BUILD_DIR:-/tmp/build}"
+# must be set in two steps, as in in one the env is still emty
+ENV PUID_NAME="${PUID_NAME:-piler}"
+ENV PILER_USER="${PUID_NAME}"
+
+RUN set -vx && echo "${PUID_NAME}" && echo "${PILER_USER}" && env && set && ls -la $HOME || true
+#RUN set -vx && echo "${PUID_NAME}" && echo "${PILER_USER}" && env && set &&  $(set +e ; set -vx ; ls -la $HOME ) || true
+
+###ENV BUILD_DIR="${BUILD_DIR:-/tmp/build}"
+ENV BUILD_DIR="${BUILD_DIR:-/BUILD}"
 RUN mkdir -p ${BUILD_DIR}
 
 ###ENV SPHINX_DOWNLOAD_URL_BASE="https://download.mailpiler.com/generic-local" \
@@ -50,8 +56,18 @@ PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-21c0db70827b2bf6b6c9c5b467f7
 #https://bitbucket.org/jsuto/piler/downloads/piler_1.3.7-bionic-94c54a0_amd64.deb
 
 ENV HOME="/var/piler" \
-PUID=${PUID:-911} \
-PGID=${PGID:-911}
+PUID_NAME=${PUID_NAME:-abc} \
+PUID=${PUID:-9001} \
+PGID=${PGID:-9001}
+####PUID=${PUID:-911} \
+####PGID=${PGID:-911}
+
+RUN set -vx && echo "${PUID_NAME}" && echo "${PILER_USER}" && env && set && ls -la $HOME || true
+
+RUN \
+ echo "***** apt-get update && apt-get upgrade ****" && \
+ apt-get update && \
+ apt-get upgrade -y
 
 RUN \
  echo "***** install gnupg ****" && \
@@ -63,7 +79,7 @@ RUN \
  echo "**** install packages ****" && \
  apt-get update && \
  apt-get install -y \
- wget curl rsyslog openssl sysstat php7.3-cli php7.3-cgi php7.3-mysql php7.3-fpm php7.3-zip php7.3-ldap \
+ nvi wget curl rsyslog openssl sysstat php7.3-cli php7.3-cgi php7.3-mysql php7.3-fpm php7.3-zip php7.3-ldap \
  php7.3-gd php7.3-curl php7.3-xml catdoc unrtf poppler-utils nginx tnef sudo libodbc1 libpq5 libzip5 \
  libtre5 libwrap0 cron libmariadb3 libmysqlclient-dev python3 python3-mysqldb mariadb-server php-memcached memcached 
 
@@ -113,8 +129,7 @@ RUN sha256check () { printf %s\\n "$2 *$1" ; printf %s\\n "$2 *$1" | sha256sum -
 	curl -fSL -o ${PACKAGE} "${PACKAGE_DOWNLOAD_URL_BASE}/${PACKAGE}" && \
 	sha256check ${PACKAGE} ${PACKAGE_DOWNLOAD_SHA256}
 
-### ADD "https://bitbucket.org/jsuto/piler/downloads/${PACKAGE}" "/${PACKAGE}"
-COPY start.sh /start.sh
+
  
  ##RUN \
  ##wget --no-check-certificate -q -O ${SPHINX_BIN_TARGZ} ${DOWNLOAD_URL}/generic-local/${SPHINX_BIN_TARGZ} && \
@@ -142,6 +157,7 @@ COPY start.sh /start.sh
 #RUN $([[ $(id -g piler 2>/dev/null) ]] || groupadd --gid $PGID piler)
 #RUN $([[ $(id -u piler 2>/dev/null) ]] || useradd --uid $PUID -g piler -d /var/piler -s /bin/bash piler)
 
+RUN set -vx && echo "${PUID_NAME}" && echo "${PILER_USER}" && env && set && ls -la $HOME || true
 RUN groupadd --gid $PGID piler
 RUN useradd --uid $PUID -g piler -d /var/piler -s /bin/bash piler
 RUN usermod -L piler
@@ -155,14 +171,18 @@ RUN \
  build-essential \
  libcurl4-openssl-dev php7.3-dev libwrap0-dev libtre-dev libzip-dev libmysqlclient-dev 
 
+ RUN echo "**** patch piler source ****"
+ COPY 101-piler-1-3-7-sphinxsearch-310-220-compatily-php-if-fix.patch ${BUILD_DIR}
+ RUN cd ${BUILD_DIR} && patch -p1 < ${BUILD_DIR}/101-piler-1-3-7-sphinxsearch-310-220-compatily-php-if-fix.patch
 
 RUN echo "**** build piler package from source ****"  && \
     cd ${BUILD_DIR} && \
     ./configure \
         --localstatedir=/var \
-		--prefix=/usr \
-		--sysconfdir=/etc \
-        --with-database=mysql  && \
+        --prefix=/usr \
+        --sysconfdir=/etc \
+        --with-database=mysql  \
+        --enable-tcpwrappers && \
     make && \
     su -c 'make install' && \
     ldconfig
@@ -184,10 +204,15 @@ RUN echo "**** continue with the setup ****"  && \
 #### add local files
 ###COPY root/ /
 
+COPY start.sh /start.sh
+COPY piler_1.3.7-postinst /piler-postinst
+
+###USER $PUID:$PGID
+RUN set -vx && echo "${PUID_NAME}" && echo "${PILER_USER}" && env && set && ls -la $HOME || true
 # ports and volumes
 #EXPOSE 8080 9090
 EXPOSE 25 80 443
 #VOLUME /config
-VOLUME /var/piler
+VOLUME ["/var/piler"]
 
 CMD ["/bin/bash", "/start.sh"]
