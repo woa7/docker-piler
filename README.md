@@ -1,5 +1,5 @@
 ## WorkInProgress of the docker:
-- PUID and PGID (please test it ;-)
+- PUID and PGID ([please test it ;-) ](#testing-the-beta-based-on-ubuntu-2004-lts-focal-fossa) 
 - DONE, use the tar not the precompiled DEB, as the DEB is amd64 only.
 - 70% DONE, hope i can add amd64, arm, arm64, ppc64le, s390x, as Supported Architectures
 - 90% DONE, use ubuntu focal as docker base
