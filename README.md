@@ -1,8 +1,8 @@
 ## WorkInProgress of the docker:
-- PUID and PGID (not working at time)
-- use the tar not the precompiled DEB, as the DEB is amd64 only.
-- hope i can add amd64, arm, arm64, ppc64le, s390x, as Supported Architectures
-- use ubuntu focal as docker base
+- PUID and PGID (please test it ;-)
+- DONE, use the tar not the precompiled DEB, as the DEB is amd64 only.
+- 70% DONE, hope i can add amd64, arm, arm64, ppc64le, s390x, as Supported Architectures
+- 90% DONE, use ubuntu focal as docker base
 - docker ENV for password setting
 - generate secure random MYSQL passwords
 
@@ -46,7 +46,11 @@ or
 
 ## testing the beta based on Ubuntu 20.04 LTS Focal Fossa
   PILER_VAR_DATA=/var/piler-data ; 
-  docker run -d --name piler -p 25:25 -p 80:80 -p 443:443 -v ${PILER_VAR_DATA:-/foo/path/to/appdata/config}:/var/piler -e PILER_HOST=archive.example.org woa7/piler:focal
+  docker create --name=piler -e PUID=$(id -u) -e PGID=$(id -g) -e PILER_HOST=archive.example.org -p 25:25 -p 80:80 -p 443:443 -v ${PILER_VAR_DATA/config:-/dummy}:/config -v ${PILER_VAR_DATA/data:-/dummy}:/data woa7/piler:focal
+  docker start piler ; docker logs -f piler
+#  OR
+  PILER_VAR_DATA=/var/piler-data ; 
+  docker run -d --name piler -e PUID=$(id -u) -e PGID=$(id -g) -e PILER_HOST=archive.example.org -p 25:25 -p 80:80 -p 443:443 -v ${PILER_VAR_DATA/config:-/dummy}:/config -v ${PILER_VAR_DATA/data:-/dummy}:/data woa7/piler:focal
 
 ## User / Group Identifiers
 
