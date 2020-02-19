@@ -78,6 +78,33 @@ fix_configs() {
    sed -i "s%^\$config\['PILER_BINARY'\].*%\$config\['PILER_BINARY'\] = '/usr/sbin/piler';%" "$CONFIG_PHP"
 }
 
+if [[ ! -d /config/etc/piler ]]; then
+  set -vx
+  create_dir_if_not_exist /config/etc
+  cp -pr --no-clobber --verbose /etc/piler /config/etc/piler
+  mv /etc/piler /etc/piler.org
+  ln -s /config/etc/piler /etc/piler
+fi
+
+if [[ ! -d /data/piler/imap ]]; then
+  set -vx
+  create_dir_if_not_exist /data/piler
+  cp -pr --no-clobber --verbose /var/piler/imap /data/piler/imap
+  mv /var/piler/imap /var/piler/imap.org
+  ln -s /data/piler/imap /var/piler/imap
+fi
+
+if [[ ! -d /data/piler/store ]]; then
+  set -vx
+  create_dir_if_not_exist /data/piler
+  cp -pr --no-clobber --verbose /var/piler/store /data/piler/store
+  mv /var/piler/store /var/piler/store.org
+  ln -s /data/piler/store /var/piler/store
+fi
+
+#[[ -d /config/etc/piler ]] || cp -pr --no-clobber --verbose /etc/piler /config/etc/piler
+#/config/etc/piler
+#ln -s /config/etc/piler /etc/piler
 
 
 create_dir_if_not_exist /var/piler

@@ -16,6 +16,11 @@ MYSQL_DATABASE="piler" \
 MYSQL_PILER_PASSWORD="piler123" \
 MYSQL_ROOT_PASSWORD="abcde123"
 
+RUN mkdir /data || true
+RUN mkdir /config || true
+RUN mkdir /config/etc || true
+###RUN ln -s ln -s /config/etc/piler /etc/piler
+
 # must be set in two steps, as in in one the env is still emty
 ENV PUID_NAME="${PUID_NAME:-piler}"
 ENV PILER_USER="${PUID_NAME}"
@@ -170,7 +175,8 @@ RUN \
  apt-get install -y \
  build-essential \
  libcurl4-openssl-dev php7.3-dev libwrap0-dev libtre-dev libzip-dev libmariadb-dev libc6 libc6-dev \
- libc6-x32 libc6-dev-x32 libc6-i386 libc6-dev-i386 libc6-amd64-cross libc6-amd64-i386-cross libc6-amd64-x32-cross libc6-arm64-cross libc6-armhf-cross libc6-dev-arm64-cross libc6-dev-armhf-cross
+ libc6-dev
+ ####libc6-x32 libc6-dev-x32 libc6-i386 libc6-dev-i386 libc6-amd64-cross libc6-amd64-i386-cross libc6-amd64-x32-cross libc6-arm64-cross libc6-armhf-cross libc6-dev-arm64-cross libc6-dev-armhf-cross
  ###libcurl4-openssl-dev php7.3-dev libwrap0-dev libtre-dev libzip-dev libmysqlclient-dev
 
  RUN echo "**** patch piler source ****"
@@ -218,14 +224,16 @@ COPY piler_1.3.7-postinst /piler-postinst
 ###COPY piler_1.3.7-etc_piler-nginx.conf.dist /piler-nginx.conf.dist
 COPY piler_1.3.7-etc_piler-nginx.conf.dist-mod-php7.3 /piler-nginx.conf.dist
 ### FIXME 
-RUN [[ -f /etc/piler/piler-nginx.conf.dist ]] && mv /piler-nginx.conf.dist /piler-nginx.conf.dist-FILE-NOT-IN-USE || cp -p /piler-nginx.conf.dist /etc/piler/
+#RUN $( [[ -f /etc/piler/piler-nginx.conf.dist ]] && mv /piler-nginx.conf.dist /piler-nginx.conf.dist-FILE-NOT-IN-USE || cp -p /piler-nginx.conf.dist /etc/piler/ )
+RUN $( [ -f /etc/piler/piler-nginx.conf.dist ] && mv /piler-nginx.conf.dist /piler-nginx.conf.dist-FILE-NOT-IN-USE || cp -p /piler-nginx.conf.dist /etc/piler/ )
 
 ###USER $PUID:$PGID
 RUN set -vx && echo "${PUID_NAME}" && echo "${PILER_USER}" && env && set && ls -la $HOME || true
 # ports and volumes
 #EXPOSE 8080 9090
 EXPOSE 25 80 443
-#VOLUME /config
-VOLUME ["/var/piler"]
+VOLUME /config
+VOLUME /data
+###VOLUME ["/var/piler"]
 
 CMD ["/bin/bash", "/start.sh"]
