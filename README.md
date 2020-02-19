@@ -48,11 +48,11 @@ or
   PILER_VAR_DATA=/var/piler-data ; 
   docker create --name=piler -e PUID=$(id -u) -e PGID=$(id -g) -e PILER_HOST=archive.example.org -p 25:25 -p 80:80 -p 443:443 -v ${PILER_VAR_DATA/config:-/dummy}:/config -v ${PILER_VAR_DATA/data:-/dummy}:/data woa7/piler:focal
   docker start piler ; docker logs -f piler
-###  OR
+### OR
   PILER_VAR_DATA=/var/piler-data ; 
   docker run -d --name piler -e PUID=$(id -u) -e PGID=$(id -g) -e PILER_HOST=archive.example.org -p 25:25 -p 80:80 -p 443:443 -v ${PILER_VAR_DATA/config:-/dummy}:/config -v ${PILER_VAR_DATA/data:-/dummy}:/data woa7/piler:focal
 
-## User / Group Identifiers
+# User / Group Identifiers
 
 When using volumes (`-v` flags) permissions issues can arise between the host OS and the container, we avoid this issue by allowing you to specify the user `PUID` and group `PGID`.
 
