@@ -35,11 +35,18 @@ create_mysql_db() {
 
 pre_seed_sphinx() {
    echo "Writing sphinx configuration"
+###   sed -e "s%MYSQL_HOSTNAME%${MYSQL_HOSTNAME}%" \
+###       -e "s%MYSQL_DATABASE%${MYSQL_DATABASE}%" \
+###       -e "s%MYSQL_USERNAME%${PILER_USER}%" \
+###       -e "s%MYSQL_PASSWORD%${MYSQL_PILER_PASSWORD}%" \
+###       -e "s%220%311%" \
+###       -e "s%type = mysql%type = mysql\n   sql_sock = /var/run/mysqld/mysqld.sock%" \
+###       "${SYSCONFDIR}/piler/sphinx.conf.dist" > "$SPHINXCFG"
+# without hardedit sphinx to 311, and leave it on 220
    sed -e "s%MYSQL_HOSTNAME%${MYSQL_HOSTNAME}%" \
        -e "s%MYSQL_DATABASE%${MYSQL_DATABASE}%" \
        -e "s%MYSQL_USERNAME%${PILER_USER}%" \
        -e "s%MYSQL_PASSWORD%${MYSQL_PILER_PASSWORD}%" \
-       -e "s%220%311%" \
        -e "s%type = mysql%type = mysql\n   sql_sock = /var/run/mysqld/mysqld.sock%" \
        "${SYSCONFDIR}/piler/sphinx.conf.dist" > "$SPHINXCFG"
 
