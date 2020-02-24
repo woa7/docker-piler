@@ -145,6 +145,8 @@ RUN sha256check () { printf %s\\n "$2 *$1" ; printf %s\\n "$2 *$1" | sha256sum -
  RUN echo "**** install sphinxsearch package via apt-get ****" && apt-get update && apt-get install -y sphinxsearch
  
    RUN \
+    sed -i 's/^/###/' /etc/init.d/sphinxsearch && \
+    echo "### piler install, comment full file to stop the OS reindex" >> /etc/init.d/sphinxsearch && \
     sed -i 's/mail.[iwe].*//' /etc/rsyslog.conf && \
     sed -i '/session    required     pam_loginuid.so/c\#session    required     pam_loginuid.so' /etc/pam.d/cron && \
     mkdir /etc/piler && \
