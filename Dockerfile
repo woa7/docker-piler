@@ -185,9 +185,9 @@ RUN \
  ####libc6-x32 libc6-dev-x32 libc6-i386 libc6-dev-i386 libc6-amd64-cross libc6-amd64-i386-cross libc6-amd64-x32-cross libc6-arm64-cross libc6-armhf-cross libc6-dev-arm64-cross libc6-dev-armhf-cross
  ###libcurl4-openssl-dev php7.4-dev libwrap0-dev libtre-dev libzip-dev libmysqlclient-dev
 
- RUN echo "**** patch piler source ****"
- COPY 101-piler-1-3-7-sphinxsearch-310-220-compatily-php-if-fix.patch ${BUILD_DIR}
- RUN cd ${BUILD_DIR} && patch -p1 < ${BUILD_DIR}/101-piler-1-3-7-sphinxsearch-310-220-compatily-php-if-fix.patch
+ #RUN echo "**** patch piler source ****"
+ #COPY 101-piler-1-3-7-sphinxsearch-310-220-compatily-php-if-fix.patch ${BUILD_DIR}
+ #RUN cd ${BUILD_DIR} && patch -p1 < ${BUILD_DIR}/101-piler-1-3-7-sphinxsearch-310-220-compatily-php-if-fix.patch
 
 RUN echo "**** build piler package from source ****"  && \
     cd ${BUILD_DIR} && \
@@ -226,9 +226,9 @@ RUN echo "**** continue with the setup ****"  && \
 ###COPY root/ /
 
 COPY start.sh /start.sh
-COPY piler_1.3.7-postinst /piler-postinst
+###COPY piler_1.3.7-postinst /piler-postinst
 ###COPY piler_1.3.7-etc_piler-nginx.conf.dist /piler-nginx.conf.dist
-COPY piler_1.3.7-etc_piler-nginx.conf.dist-mod-php7.3 /piler-nginx.conf.dist
+###COPY piler_1.3.7-etc_piler-nginx.conf.dist-mod-php7.3 /piler-nginx.conf.dist
 ### FIXME 
 #RUN $( [[ -f /etc/piler/piler-nginx.conf.dist ]] && mv /piler-nginx.conf.dist /piler-nginx.conf.dist-FILE-NOT-IN-USE || cp -p /piler-nginx.conf.dist /etc/piler/ )
 RUN $( [ -f /etc/piler/piler-nginx.conf.dist ] && mv /piler-nginx.conf.dist /piler-nginx.conf.dist-FILE-NOT-IN-USE || cp -p /piler-nginx.conf.dist /etc/piler/ )
