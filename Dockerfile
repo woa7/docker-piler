@@ -84,9 +84,12 @@ RUN \
  echo "**** install packages ****" && \
  apt-get update && \
  apt-get install -y \
- nvi wget curl rsyslog openssl sysstat php7.3-cli php7.3-cgi php7.3-mysql php7.3-fpm php7.3-zip php7.3-ldap \
- php7.3-gd php7.3-curl php7.3-xml catdoc unrtf poppler-utils nginx tnef sudo libodbc1 libpq5 libzip5 \
+ nvi wget curl rsyslog openssl sysstat \
+ catdoc unrtf poppler-utils nginx tnef sudo libodbc1 libpq5 libzip5 \
  libtre5 libwrap0 cron libmariadb3 libmysqlclient-dev python3 python3-mysqldb mariadb-server php-memcached memcached mariadb-client
+ RUN \
+ $(apt-get install -y php7.3-cli php7.3-cgi php7.3-mysql php7.3-fpm php7.3-zip php7.3-ldap php7.3-gd php7.3-curl php7.3-xml
+|| apt-get install -y php-cli php-cgi php-mysql php-fpm php-zip php-ldap php-gd php-curl php-xml )
 
 # versions bump libzip4 -> libzip5
 
@@ -176,10 +179,12 @@ RUN \
  apt-get update && \
  apt-get install -y \
  build-essential \
- libcurl4-openssl-dev php7.3-dev libwrap0-dev libtre-dev libzip-dev libmariadb-dev libc6 libc6-dev \
- libc6-dev
+ libcurl4-openssl-dev libwrap0-dev libtre-dev libzip-dev libmariadb-dev libc6 libc6-dev
+RUN \
+ $(apt-get install -y php7.2-dev || apt-get install -y php7.3-dev || apt-get install -y php7.4-dev || apt-get install -y php-dev)
  ####libc6-x32 libc6-dev-x32 libc6-i386 libc6-dev-i386 libc6-amd64-cross libc6-amd64-i386-cross libc6-amd64-x32-cross libc6-arm64-cross libc6-armhf-cross libc6-dev-arm64-cross libc6-dev-armhf-cross
  ###libcurl4-openssl-dev php7.3-dev libwrap0-dev libtre-dev libzip-dev libmysqlclient-dev
+
 
  RUN echo "**** patch piler source ****"
  COPY 101-piler-1-3-7-sphinxsearch-310-220-compatily-php-if-fix.patch ${BUILD_DIR}
@@ -224,7 +229,8 @@ RUN echo "**** continue with the setup ****"  && \
 COPY start.sh /start.sh
 COPY piler_1.3.7-postinst /piler-postinst
 ###COPY piler_1.3.7-etc_piler-nginx.conf.dist /piler-nginx.conf.dist
-COPY piler_1.3.7-etc_piler-nginx.conf.dist-mod-php7.3 /piler-nginx.conf.dist
+###COPY piler_1.3.7-etc_piler-nginx.conf.dist-mod-php7.3 /piler-nginx.conf.dist
+COPY piler_1.3.7-etc_piler-nginx.conf.dist-mod-php7.4 /piler-nginx.conf.dist
 ### FIXME 
 #RUN $( [[ -f /etc/piler/piler-nginx.conf.dist ]] && mv /piler-nginx.conf.dist /piler-nginx.conf.dist-FILE-NOT-IN-USE || cp -p /piler-nginx.conf.dist /etc/piler/ )
 RUN $( [ -f /etc/piler/piler-nginx.conf.dist ] && mv /piler-nginx.conf.dist /piler-nginx.conf.dist-FILE-NOT-IN-USE || cp -p /piler-nginx.conf.dist /etc/piler/ )
