@@ -181,7 +181,8 @@ RUN \
  build-essential \
  libcurl4-openssl-dev libwrap0-dev libtre-dev libzip-dev libmariadb-dev libc6 libc6-dev
 RUN \
- $(apt-get install -y php7.2-dev || apt-get install -y php7.3-dev || apt-get install -y php7.4-dev || apt-get install -y php-dev)
+ apt-get install -y php-dev
+ #$(apt-get install -y php7.2-dev || apt-get install -y php7.3-dev || apt-get install -y php7.4-dev || apt-get install -y php-dev)
  ####libc6-x32 libc6-dev-x32 libc6-i386 libc6-dev-i386 libc6-amd64-cross libc6-amd64-i386-cross libc6-amd64-x32-cross libc6-arm64-cross libc6-armhf-cross libc6-dev-arm64-cross libc6-dev-armhf-cross
  ###libcurl4-openssl-dev php7.3-dev libwrap0-dev libtre-dev libzip-dev libmysqlclient-dev
 
