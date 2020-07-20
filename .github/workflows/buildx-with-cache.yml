@@ -30,11 +30,12 @@ jobs:
             ${{ runner.os }}-buildx-
       -
         name: Docker Buildx (build)
+        #             --platform linux/amd64,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x \
         run: |
           docker buildx build \
             --cache-from "type=local,src=/tmp/.buildx-cache" \
             --cache-to "type=local,dest=/tmp/.buildx-cache" \
-            --platform linux/amd64,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x \
+            --platform linux/amd64 \
             --output "type=image,push=false" \
             --file ./Dockerfile ./
 #      -
