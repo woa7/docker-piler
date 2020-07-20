@@ -231,7 +231,7 @@ COPY start.sh /start.sh
 ###COPY piler_1.3.7-etc_piler-nginx.conf.dist-mod-php7.3 /piler-nginx.conf.dist
 ### FIXME 
 #RUN $( [[ -f /etc/piler/piler-nginx.conf.dist ]] && mv /piler-nginx.conf.dist /piler-nginx.conf.dist-FILE-NOT-IN-USE || cp -p /piler-nginx.conf.dist /etc/piler/ )
-RUN $( [ -f /etc/piler/piler-nginx.conf.dist ] && $( [ -f /piler-nginx.conf.dist ] &&mv /piler-nginx.conf.dist /piler-nginx.conf.dist-FILE-NOT-IN-USE ) || $( [ -f /piler-nginx.conf.dist ] &&cp -p /piler-nginx.conf.dist /etc/piler/ ) )
+RUN $( [ -f /etc/piler/piler-nginx.conf.dist ] && $( [ -f /piler-nginx.conf.dist ] &&mv /piler-nginx.conf.dist /piler-nginx.conf.dist-FILE-NOT-IN-USE ) || $( [ -f /piler-nginx.conf.dist ] &&cp -p /piler-nginx.conf.dist /etc/piler/ ) ; true ) 
 
 ###USER $PUID:$PGID
 RUN set -vx && echo "${PUID_NAME}" && echo "${PILER_USER}" && env && set && ls -la $HOME || true
