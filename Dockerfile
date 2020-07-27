@@ -52,10 +52,13 @@ RUN mkdir -p ${BUILD_DIR}
 ###PACKAGE="${PACKAGE:-piler_1.3.7-bionic-94c54a0_amd64.deb}" \
 ###PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-025bf31155d31c4764c037df29703f85e2e56d66455616a25411928380f49d7c}"
 
-ENV PACKAGE_DOWNLOAD_URL_BASE="https://bitbucket.org/jsuto/piler/downloads" \
-PACKAGE="${PACKAGE:-piler-1.3.7.tar.gz}" \
-PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-21c0db70827b2bf6b6c9c5b467f748ea90adf7b4c2c38408edeee331e101925e}"
+#ENV PACKAGE_DOWNLOAD_URL_BASE="https://bitbucket.org/jsuto/piler/downloads" \
+#PACKAGE="${PACKAGE:-piler-1.3.7.tar.gz}" \
+#PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-21c0db70827b2bf6b6c9c5b467f748ea90adf7b4c2c38408edeee331e101925e}"
 
+ENV PACKAGE_DOWNLOAD_URL_BASE="https://bitbucket.org/jsuto/piler/downloads" \
+PACKAGE="${PACKAGE:-piler-1.3.8.tar.gz}" \
+PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-5d5b410bf32e1fcb994b6c12cc5ebfecd9364295242fdd8ab73bb958c027151f}"
 
 # https://bitbucket.org/jsuto/piler/downloads/piler-1.3.7.tar.gz
 #https://bitbucket.org/jsuto/piler/downloads/piler_1.3.7-bionic-94c54a0_amd64.deb
