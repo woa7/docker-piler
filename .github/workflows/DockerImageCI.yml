@@ -1,0 +1,30 @@
+name: DockerImageCI
+
+on: [push]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    #
+    # In this step, this action saves a list of existing images,
+    # the cache is created without them in the post run.
+    # It also restores the cache if it exists.
+    # DISABLED - uses: satackey/action-docker-layer-caching@v0.0.3
+    # see https://github.com/marketplace/actions/docker-layer-caching
+    # and alternative https://github.com/crazy-max/ghaction-docker-buildx#leverage-buildx-cache
+    #
+    - name: Build the Docker image
+      # org run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: |
+        set -vx
+        export git_branch=${GITHUB_REF##*/}
+        export git_hash_short=$(git rev-parse --short "$GITHUB_SHA")
+        export VCS_REF_VAR=$(git rev-parse --short "$GITHUB_SHA")
+        export BUILD_DATE_VAR=$(date -u +”%Y-%m-%dT%H:%M:%SZ”)
+        docker build . --build-arg VCS_REF=$VCS_REF_VAR --build-arg BUILD_DATE=$BUILD_DATE_VAR --file Dockerfile --tag my-image-name:$(date +%s)
+        printenv
