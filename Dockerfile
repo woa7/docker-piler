@@ -56,9 +56,13 @@ RUN mkdir -p ${BUILD_DIR}
 #PACKAGE="${PACKAGE:-piler-1.3.7.tar.gz}" \
 #PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-21c0db70827b2bf6b6c9c5b467f748ea90adf7b4c2c38408edeee331e101925e}"
 
+#ENV PACKAGE_DOWNLOAD_URL_BASE="https://bitbucket.org/jsuto/piler/downloads" \
+#PACKAGE="${PACKAGE:-piler-1.3.8.tar.gz}" \
+#PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-5d5b410bf32e1fcb994b6c12cc5ebfecd9364295242fdd8ab73bb958c027151f}"
+
 ENV PACKAGE_DOWNLOAD_URL_BASE="https://bitbucket.org/jsuto/piler/downloads" \
-PACKAGE="${PACKAGE:-piler-1.3.8.tar.gz}" \
-PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-5d5b410bf32e1fcb994b6c12cc5ebfecd9364295242fdd8ab73bb958c027151f}"
+PACKAGE="${PACKAGE:-piler-1.3.9.tar.gz}" \
+PACKAGE_DOWNLOAD_SHA256="${PACKAGE_DOWNLOAD_SHA256:-eed041507fd9b16f59002570fde34b004980be70362efdec6f90b5f05face867}"
 
 
 # https://bitbucket.org/jsuto/piler/downloads/piler-1.3.7.tar.gz
