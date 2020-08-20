@@ -14,7 +14,7 @@ jobs:
     # In this step, this action saves a list of existing images,
     # the cache is created without them in the post run.
     # It also restores the cache if it exists.
-    - uses: satackey/action-docker-layer-caching@v0.0.3
+    - uses: satackey/action-docker-layer-caching@v0.0.8
     # see https://github.com/marketplace/actions/docker-layer-caching
     # and alternative https://github.com/crazy-max/ghaction-docker-buildx#leverage-buildx-cache
     #
